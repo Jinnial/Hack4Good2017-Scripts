@@ -1,0 +1,92 @@
+--Drop Database if Exists
+USE master
+IF DB_ID('ipl_main') IS NOT NULL
+	DROP DATABASE ipl_main
+GO
+
+--Create Database
+CREATE DATABASE ipl_main
+GO
+
+--Drop Tables That Exist
+USE ipl_main
+IF OBJECT_ID('Mentors') IS NOT NULL
+	DROP TABLE Mentors
+GO
+IF OBJECT_ID('Students') IS NOT NULL
+	DROP TABLE Students
+GO
+IF OBJECT_ID('Members') IS NOT NULL
+	DROP TABLE Memebers
+GO
+IF OBJECT_ID('Modules') IS NOT NULL
+	DROP TABLE Mentors
+GO
+IF OBJECT_ID('ModuleContent') IS NOT NULL
+	DROP TABLE ModuleContent
+GO
+IF OBJECT_ID('StudentAssignments') IS NOT NULL
+	DROP TABLE StudentAssignments
+GO
+IF OBJECT_ID('StudentAssignmentSubmissions') IS NOT NULL
+	DROP TABLE StudentAssignmentSubmissions
+GO
+
+--Create Tables
+CREATE TABLE Mentors(
+	MentorID INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	FirstName VARCHAR(50) NOT NULL,
+	LastName VARCHAR(50) NOT NULL,
+	EmailAddress VARCHAR(75) NOT NULL,
+	PhoneNumber REAL NOT NULL
+);
+GO
+
+CREATE TABLE Students(
+	StudentID INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	FirstName VARCHAR(50) NOT NULL,
+	LastName VARCHAR(50) NOT NULL,
+	EmailAddress VARCHAR(75) NULL,
+	PhoneNumber REAL NOT NULL
+);
+GO
+
+CREATE TABLE Members(
+	MemberID INT IDENTITY(1,1)PRIMARY KEY NOT NULL,
+	StudentID INT FOREIGN KEY REFERENCES Students(StudentID) NOT NULL,
+	MentorID INT FOREIGN KEY REFERENCES Mentors(MentorID) NULL
+);
+
+GO
+CREATE TABLE Modules(
+	ModuleID INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	Name VARCHAR(MAX) NOT NULL,
+	Description VARCHAR(MAX) NULL
+);
+
+GO
+
+CREATE TABLE ModuleContent(
+	ContentID INT IDENTITY(1,1)PRIMARY KEY NOT NULL,
+	ModuleID INT FOREIGN KEY REFERENCES Modules(ModuleID) NOT NULL,
+	TableName VARCHAR(MAX) NOT NULL,
+	Name VARCHAR(MAX) NOT NULL,
+	Description VARCHAR(MAX) NULL
+);
+GO
+
+CREATE TABLE StudentAssignments(
+	AssignmentID INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	ContentID INT FOREIGN KEY REFERENCES ModuleContent(ContentID) NOT NULL,
+	StudentID INT FOREIGN KEY REFERENCES Students(StudentID) NOT NULL,
+	Completed BIT NOT NULL,
+	FirstAttempt BIT NOT NULL
+);
+GO
+
+CREATE TABLE StudentAssignmentSubmissions(
+	SubmissionID INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	AssignmentID INT FOREIGN KEY REFERENCES StudentAssignments(AssignmentID) NOT NULL,
+	AttemptNumber INT NOT NULL
+);
+GO
